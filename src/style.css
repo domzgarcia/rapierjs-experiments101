@@ -1,0 +1,119 @@
+@import url("https://fonts.googleapis.com/css?family=Amatic+SC");
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  min-height: calc(var(--vh, 1vh) * 100);
+}
+
+.overlay {
+  opacity: 1;
+  background-color: rgb(0, 0, 0);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  pointer-events: none;
+  transition: opacity 1s;
+}
+
+.overlay.fade {
+  opacity: 0;
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background-color: transparent;
+  font-size: 2rem;
+  font-family: "Amatic SC";
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.loading.fade {
+  opacity: 0;
+}
+
+.start {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  color: white;
+  background-color: transparent;
+  font-size: 4rem;
+  font-family: "Amatic SC";
+  opacity: 0;
+  transition: opacity 0.5s;
+  display: none;
+}
+
+.start.fadeIn {
+  opacity: 1;
+}
+
+.start.fadeOut {
+  opacity: 0;
+}
+
+canvas.threejs {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: calc(var(--vh, 1vh) * 100);
+  touch-action: none;
+  -ms-touch-action: none;
+  overscroll-behavior: none;
+}
+
+.joystick {
+  position: fixed;
+  left: 1.5rem;
+  bottom: 1.5rem;
+  width: 8rem;
+  height: 8rem;
+  touch-action: none;
+  z-index: 5;
+}
+
+.joystick-base,
+.joystick-stick {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.joystick-base {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.18);
+}
+
+.joystick-stick {
+  width: 2.4rem;
+  height: 2.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .start:hover {
+    color: #9effe7;
+  }
+}
