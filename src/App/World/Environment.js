@@ -38,7 +38,7 @@ export default class Environment {
 
   addGround() {
     const groundGeometry = new THREE.BoxGeometry(500, 1, 100);
-    const groundMaterial = new THREE.MeshStandardMaterial({ color: "#e6d2a2" });
+    const groundMaterial = new THREE.MeshStandardMaterial({ color: "#e6d2a2", wireframe: false });
     this.groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
     this.groundMesh.position.y = -0.5;
     // this.groundMesh.receiveShadow = true;
@@ -49,6 +49,7 @@ export default class Environment {
   addWalls() {
     const wallMaterial = new THREE.MeshStandardMaterial({
       color: "#707070",
+      wireframe: false,
     });
 
     const wallGeometry = new THREE.BoxGeometry(100, 10, 1);
@@ -79,16 +80,17 @@ export default class Environment {
   addStairs() {
     const stairMaterial = new THREE.MeshStandardMaterial({
       color: "#9b5932",
+      wireframe: false,
     });
 
     const stairGeometry = new THREE.BoxGeometry(10, 1, 100);
 
     const stairPositions = [
       { x: 5, y: 0.5, z: 0 },
-      { x: 15, y: 1, z: 0 },
-      { x: 25, y: 1.5, z: 0 },
-      { x: 35, y: 2, z: 0 },
-      { x: 45, y: 2.5, z: 0 },
+      { x: 15, y: 1.5, z: 0 },
+      { x: 25, y: 2.5, z: 0 },
+      { x: 35, y: 3.5, z: 0 },
+      { x: 45, y: 4.5, z: 0 },
     ];
 
     stairPositions.forEach((position) => {
@@ -104,11 +106,12 @@ export default class Environment {
   addSlope() {
     const slopeMaterial = new THREE.MeshStandardMaterial({
       color: "#8c6a3d",
+      wireframe: false,
     });
 
     const slopeGeometry = new THREE.BoxGeometry(60, 1, 20);
     const railGeometry = new THREE.BoxGeometry(60, 4, 1);
-    const railMaterial = new THREE.MeshStandardMaterial({ color: "#5a5a5a" });
+    const railMaterial = new THREE.MeshStandardMaterial({ color: "#5a5a5a", wireframe: false });
 
     const innerSlope = new THREE.Mesh(slopeGeometry, slopeMaterial);
     innerSlope.rotation.z = -Math.PI / 12; // climb from inside toward the left wall
@@ -142,9 +145,9 @@ export default class Environment {
   addMeshes() {
     // const geometry = new THREE.BoxGeometry(1, 1, 1);
     const geometry = new THREE.SphereGeometry(1, 32, 32);
-    const material = new THREE.MeshStandardMaterial({ color: "blue" });
+    const material = new THREE.MeshStandardMaterial({ color: "blue", wireframe: false });
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 1; i++) {
       const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(
         Math.random() * 3,

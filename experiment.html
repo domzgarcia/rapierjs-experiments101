@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THREE.Terrain with Pathway</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/gh/mattes3/THREE.Terrain@gh-pages/demo/libs/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mattes3/THREE.Terrain@gh-pages/build/THREE.Terrain.min.js"></script>
+</head>
+<body>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // 1. Setup Scene, Camera, and WebGL Renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 180, 250);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 2. Add Ambient and Directional Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+        directionalLight.position.set(100, 300, 100);
+        scene.add(directionalLight);
+
+        // 3. Helper Function: Create mock textures
+        function createColorTexture(hexColor) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = hexColor;
+            ctx.fillRect(0, 0, 128, 128);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            return texture;
+        }
+
+        const sand = createColorTexture('#d2b48c'); 
+        const grass = createColorTexture('#3b5323');
+        const rock = createColorTexture('#696969');
+        const pathTexture = createColorTexture('#ff3333'); // Bright red pathway
+
+        // 4. Generate the Pathway Mask Splat Map
+        const splatCanvas = document.createElement('canvas');
+        splatCanvas.width = 512;
+        splatCanvas.height = 512;
+        const splatCtx = splatCanvas.getContext('2d');
+
+        splatCtx.fillStyle = '#000000';
+        splatCtx.fillRect(0, 0, 512, 512);
+
+        splatCtx.strokeStyle = '#ffffff';
+        splatCtx.lineWidth = 24;
+        splatCtx.lineCap = 'round';
+        splatCtx.lineJoin = 'round';
+        
+        splatCtx.beginPath();
+        splatCtx.moveTo(50, 50);
+        splatCtx.bezierCurveTo(200, 50, 100, 250, 256, 256);
+        splatCtx.bezierCurveTo(400, 260, 300, 450, 462, 462);
+        splatCtx.stroke();
+
+        const pathSplatMap = new THREE.CanvasTexture(splatCanvas);
+
+        // 5. Access the generation functions via the global THREE namespace 
+        // as configured in your targeted library fork.
+        const terrainMaterial = THREE.Terrain.generateBlendedMaterial([
+            { texture: sand },
+            { texture: grass, levels: [-80, -35, 20, 50] },
+            { texture: rock, glsl: 'slope > 0.78 ? 1.0 : 0.0' },
+            { 
+                texture: pathTexture, 
+                splat: pathSplatMap, 
+                glsl: 'vSplat.r' 
+            },
+        ]);
+
+        // 6. Configure and Create the Procedural Terrain using global constructors
+        const xS = 63;
+        const yS = 63;
+
+        const terrainScene = new THREE.Terrain({
+            easing: THREE.Terrain.Linear,
+            frequency: 2,
+            heightmap: THREE.Terrain.DiamondSquare,
+            material: terrainMaterial, 
+            maxHeight: 60,
+            minHeight: -60,
+            steps: 1,
+            xSegments: xS,
+            ySegments: yS,
+            xSize: 500,
+            ySize: 500,
+        });
+
+        scene.add(terrainScene);
+        camera.lookAt(new THREE.Vector3(0, -20, 0));
+
+        // 7. Simple Animation Render Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            terrainScene.rotation.z += 0.002; 
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 8. Handle Window Resizing
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

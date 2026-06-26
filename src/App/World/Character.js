@@ -27,8 +27,14 @@ export default class Character {
 
     // add avatar to character
     const avatar = this.avatar.scene;
-    avatar.position.y = -2.5; // -2.5;
     avatar.scale.setScalar(3);
+    avatar.updateMatrixWorld(true);
+
+    // Align the avatar's lowest point to the character's expected foot level
+    const avatarBounds = new THREE.Box3().setFromObject(avatar);
+    const colliderBottomOffset = -(1.8 + 0.5); // halfHeight + radius from CharacterController
+    avatar.position.y = colliderBottomOffset - avatarBounds.min.y;
+
     avatar.traverse((child) => {
       if (child.isMesh) {
         child.castShadow = true;

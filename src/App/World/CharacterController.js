@@ -40,9 +40,9 @@ export default class CharacterController {
       this.physics.rapier.RigidBodyDesc.kinematicPositionBased();
     this.rigidBody = this.physics.world.createRigidBody(this.rigidBodyType);
 
-    // Create a capsule collider for smoother, rounded slope collision
-    const radius = 0.6;
-    const halfHeight = 2.0;
+    // Create a capsule collider sized for the character and stair steps
+    const radius = 0.5;
+    const halfHeight = 1.8; // total capsule height = 2*halfHeight + 2*radius ~= 4.6
     this.colliderType = this.physics.rapier.ColliderDesc.capsule(radius, halfHeight);
     this.collider = this.physics.world.createCollider(
       this.colliderType,
@@ -57,12 +57,12 @@ export default class CharacterController {
     this.rigidBody.setTranslation(worldPosition);
     this.rigidBody.setRotation(worldRotation);
 
-    // Create character controller, set properties, and enable autostepping
+    // Create character controller, set properties, and enable autostepping for 1m stairs
     this.characterController =
       this.physics.world.createCharacterController(0.01);
     this.characterController.setApplyImpulsesToDynamicBodies(true);
-    this.characterController.enableAutostep(3.0, 0.5, false);
-    this.characterController.enableSnapToGround(2.5);
+    this.characterController.enableAutostep(1.1, 0.5, false);
+    this.characterController.enableSnapToGround(0.5);
   }
 
   /**
